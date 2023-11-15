@@ -1,0 +1,9 @@
+VITE
+
+Tailwind CSS
+SASS
+ui.shadcn
+
+React router v6
+
+React hook form
