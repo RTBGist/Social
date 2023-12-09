@@ -17,7 +17,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {INewUser} from "@/types";
 import {useToast} from "@/components/ui/use-toast";
 import {useCreateUserAccount, useSignInAccount} from "@/lib/react-query/queriesAndMutations";
-import {useUserContext} from "../../context/AuthContext";
+import {useUserContext} from "@/context/AuthContext";
 
 
 
