@@ -62,19 +62,6 @@ const PostForm = ({ post }: PostFormProps) => {
 				<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5x1">
 					<FormField
 							control={form.control}
-							name="username"
-							render={({ field }) => (
-									<FormItem>
-										<FormLabel>Username</FormLabel>
-										<FormControl>
-											<Input type="text" className="shad-input" {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-							)}
-					/>
-					<FormField
-							control={form.control}
 							name="caption"
 							render={({ field }) => (
 									<FormItem>
