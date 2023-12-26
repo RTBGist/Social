@@ -68,7 +68,7 @@ const PostCard = ({ post }: PostCardProps) => {
 
 				<PostStats
 					post={post}
-					userID={user.id}
+					userId={user.id}
 				/>
 			</div>
 	);

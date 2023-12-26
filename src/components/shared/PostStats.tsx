@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Models} from "appwrite";
-import {useDeletePost, useLikePost, useSavePost} from "@/lib/react-query/queriesAndMutations";
-import {useUserContext} from "../../context/AuthContext";
-import {checkIsLiked} from "../../lib/utils";
+import {useDeletePost, useGetCurrentUser, useLikePost, useSavePost} from "@/lib/react-query/queriesAndMutations";
+import {checkIsLiked} from "@/lib/utils";
+import Loader from "./Loader";
 
 type PostStatsProps = {
 	post: Models.Document;
@@ -11,14 +11,20 @@ type PostStatsProps = {
 
 const PostStats = ({ post, userId }: PostStatsProps) => {
 	const likesList = post.likes.map((user: Models.Document) => user.$id);
-	const [likes, setLikes] = useState(likesList);
+	const [likes, setLikes] = useState(likesList || []);
 	const [isSaved, setIsSaved] = useState(false);
 
 	const { mutate: likePost } = useLikePost();
-	const { mutate: savePost } = useSavePost();
-	const { mutate: deleteSavedPost } = useDeletePost();
+	const { mutate: savePost, isPending: isSavingPost } = useSavePost();
+	const { mutate: deleteSavedPost, isPending: isDeletingSaved } = useDeletePost();
 
-	const { data: currentUser } = useUserContext();
+	const { data: currentUser } = useGetCurrentUser();
+
+	const savedPostRecord = currentUser?.save?.find((record: Models.Document) => record.post.$id === post.$id);
+
+	useEffect(() => {
+		setIsSaved(!!savedPostRecord);
+	}, [currentUser])
 
 	const handleLikePost = (e: React.MouseEvent) => {
 		e.stopPropagation();
@@ -37,8 +43,16 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 		likePost({ postId: post.$id, likesArray: newLikes })
 	}
 
-	const handleSavePost = () => {
+	const handleSavePost = (e: React.MouseEvent) => {
+		e.stopPropagation();
 
+		if(savedPostRecord) {
+			setIsSaved(false);
+			deleteSavedPost(savedPostRecord.$id);
+		} else {
+			savePost({postId: post.$id, userId});
+			setIsSaved(true);
+		}
 	}
 
 	return (
@@ -60,7 +74,9 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 				</div>
 
 				<div className="flex gap-2">
-					<img
+					{isSavingPost || isDeletingSaved
+							? <Loader />
+							: <img
 							src={isSaved
 									? "/assets/icons/saved.svg" 
 									: "/assets/icons/save.svg"
@@ -70,7 +86,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 							height={20}
 							onClick={handleSavePost}
 							className="cursor-pointer"
-					/>
+					/>}
 				</div>
 			</div>
 	);

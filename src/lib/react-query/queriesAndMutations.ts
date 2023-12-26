@@ -3,7 +3,7 @@ import {
 } from '@tanstack/react-query';
 import {
 	createPost,
-	createUserAccount, deleteSavedPost,
+	createUserAccount, deleteSavedPost, getCurrentUser,
 	getRecentPosts,
 	likePost,
 	savePost,
@@ -114,5 +114,12 @@ export const useDeletePost = () => {
 			})
 
 		}
+	})
+}
+
+export const useGetCurrentUser = () => {
+	return useQuery({
+		queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+		queryFn: getCurrentUser
 	})
 }
